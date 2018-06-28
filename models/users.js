@@ -28,7 +28,7 @@ var userSchema = new mongoose.Schema({
   salt: String
 });
 
-userSchema.methods.setPassword = (password) => {
+userSchema.methods.setPassword = function (password) {
   this.salt = crypto
     .randomBytes(16)
     .toString('hex');
@@ -37,14 +37,14 @@ userSchema.methods.setPassword = (password) => {
     .toString('hex');
 };
 
-userSchema.methods.validPassword = (password) => {
+userSchema.methods.validPassword = function (password) {
   var hash = crypto
     .pbkdf2Sync(password, this.salt, 1000, 512, 'sha512')
     .toString('hex');
   return this.hash === hash;
 };
 
-userSchema.methods.generateJwt = () => {
+userSchema.methods.generateJwt = function () {
   var expire = new Date();
   expire.setDate(expire.getDate() + 7);
 

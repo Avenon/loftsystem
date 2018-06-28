@@ -26,12 +26,19 @@ module.exports.register = (req, res) => {
 
   user.save((err) => {
     var token;
+    
     if (err) {
       sendJSONresponse(res, 404, err);
     } else {
       token = user.generateJwt();
       sendJSONresponse(res, 200, {
         'token': token
+        /* если что отправим на фронт не в токене
+        'username': user.username,
+        'firstName': user.firstName,
+        'surName': user.surName,
+        'middleName': user.middleName
+        */
       });
     }
   });
@@ -61,4 +68,62 @@ module.exports.login = (req, res) => {
       sendJSONresponse(res, 401, info);
     }
   })(req, res);
+};
+
+module.exports.updateUser = (req, res) => {
+  if (!req.params.id) {
+    sendJSONresponse(res, 404, {
+      'message': 'Not found, user id is required'
+    });
+    return;
+  }
+
+  User
+    .findById(req.params.id)
+    .exec(
+      function(err, user) {
+        if (!user) {
+          sendJSONresponse(res, 404, {
+            'message': 'User not found'
+          });
+          return;
+        } else if (err) {
+          sendJSONresponse(res, 400, err);
+          return;
+        }
+
+        user.firstName = req.body.firstName;
+        user.surName = req.body.surName;
+        user.middleName = req.body.middleName;
+
+        user.save(function (err, user) {
+          if (err) {
+            sendJSONresponse(res, 404, err);
+          } else {
+            sendJSONresponse(res, 200, user);
+          }
+        });
+      }
+    );
+};
+
+module.exports.deleteUser = (req, res) => {
+  var userid = req.params.id;
+  if (userid) {
+    User
+      .findByIdAndRemove(userid)
+      .exec(
+        function (err, user) {
+          if (err) {
+            sendJSONresponse(res, 404, err);
+            return;
+          }
+          sendJSONresponse(res, 204, null);
+        }
+      );
+  } else {
+    sendJSONresponse(res, 404, {
+      'message': 'No user id'
+    });
+  }
 };
