@@ -6,17 +6,17 @@ var newsSchema = new mongoose.Schema({
     required: true
   },
 
-  newsdate: {
+  date: {
     type: Date,
     required: true
   },
 
-  newstheme: {
+  theme: {
     type: String,
     required: true
   },
 
-  newstext: {
+  text: {
     type: String,
     required: true
   },

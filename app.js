@@ -8,6 +8,8 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const bodyParser = require('body-parser');
 const passport = require('passport');
+const session = require('express-session');
+const FileStore = require('session-file-store')(session);
 
 require('./models/db');
 
@@ -20,6 +22,20 @@ var app = express();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.text('text/plain'));
+
+app.use(
+  session({
+    store: new FileStore(),
+    secret: 'My secret',
+    resave: false,
+    saveUninitialized: true
+  })
+);
+
+app.use(passport.initialize({userProperty: 'payload'}));
+//app.use(passport.initialize());
+app.use(passport.session());
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

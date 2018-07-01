@@ -3,6 +3,18 @@ var LocalStrategy = require('passport-local').Strategy;
 var mongoose = require('mongoose');
 var User = mongoose.model('users');
 
+passport.serializeUser(function (user, done) {
+  console.log('serializeUser: ', user);
+  done(null, user.id);
+});
+
+passport.deserializeUser(function (id, done) {
+  console.log('deserializeUser: ', id);
+  User.findById(id, function (err, user) {
+    done(err, user);
+  });
+});
+
 passport.use(new LocalStrategy({
   // можно переопределить поле username, если у нас, например уникально email usernameField: 'email'
 }, (username, password, done) => {

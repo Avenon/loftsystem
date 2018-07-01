@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var News = mongoose.model('news');
+var User = mongoose.model('users');
 
 var sendJsonResponse = (res, status, content) => {
   res.status(status);
@@ -7,6 +8,7 @@ var sendJsonResponse = (res, status, content) => {
 };
 
 module.exports.getNews = (req, res) => {
+
   News
     .find()
     .exec((err, news) => {
@@ -42,23 +44,29 @@ module.exports.getOneNews = (req, res) => {
     });
   }
 };
-
+/*
+0: {id: "", text: "", theme: "", date: "", user: {…}}1: {id: "", text: "", theme: "", date: "", user: {…}}length: 2__proto__: Array(0)
+*/
 module.exports.newNews = (req, res) => {
-  News.create({
-    newsauthor: req.body.newsauthor,
-    newsdate: req.body.newsdate,
-    newstheme: req.body.newstheme,
-    newstext: req.body.newstext
-  }, function(err, news) {
-    if (err) {
-      sendJsonResponse(res, 400, err);
-    } else {
-      sendJsonResponse(res, 201, news);
-    }
-  });
+
+    News.create({
+      newsauthor: req.body.newsauthor,
+      date: req.body.date,
+      theme: req.body.theme,
+      text: req.body.text
+    }, function(err, news) {
+      if (err) {
+        sendJsonResponse(res, 400, err);
+      } else {
+        sendJsonResponse(res, 201, news);
+      }
+    });
+  //{"text":"masmasmdasfd","theme":"uar","date":"2018-06-29 20:15:45+03:00"}
+  
 };
 
 module.exports.updateNews = (req, res) => {
+
   if (!req.params.id) {
     sendJsonResponse(res, 404, {
       'message': 'Not found, news id is required'
@@ -81,9 +89,9 @@ module.exports.updateNews = (req, res) => {
         }
 
         news.newsauthor = req.body.newsauthor;
-        news.newsdate = req.body.newsdate;
-        news.newstheme = req.body.newstheme;
-        news.newstext = req.body.newstext;
+        news.date = req.body.date;
+        news.theme = req.body.theme;
+        news.text = req.body.text;
         news.save(function (err, news) {
           if (err) {
             sendJsonResponse(res, 404, err);

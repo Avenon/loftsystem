@@ -24,6 +24,10 @@ var userSchema = new mongoose.Schema({
     required: true
   },
 
+  image: {
+    type: String
+  },
+
   hash: String,
   salt: String
 });
